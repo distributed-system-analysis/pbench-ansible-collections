@@ -1,0 +1,33 @@
+---
+name: CI push pbench.agent collection into galaxy
+
+on:
+  push:
+    branches:
+      - agent
+
+jobs:
+  
+  release:
+    
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: python 3 setup
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.9'
+          cache: 'pip'
+      
+      - name: install test dependencies
+        run: pip install -r requirements.txt
+
+      - name: test collection
+        run: make
+
+      - name: Push to Galaxy
+        uses: artis3n/ansible_galaxy_collection@v2
+        with:
+          api_key: '${{ secrets.GALAXY_API_KEY }}'
